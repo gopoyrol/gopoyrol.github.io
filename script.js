@@ -1,101 +1,154 @@
-/**
- * Adds a new row to the table.
- * @function addRow
- * @returns {undefined}
- */
-function addRow() {
-    const table = document.getElementById('activityTable');
-    const newRow = table.insertRow();
-    const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
-    const newRowData = [...Array(table.rows[0].cells.length)].map(() => "");
-    if (newRowData.some(cellData => cellData !== "")) {
-        tableData.push(newRowData);
-        localStorage.setItem('tableData', JSON.stringify(tableData));
+// Request notification permission when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (Notification.permission !== 'granted') {
+        Notification.requestPermission();
     }
-    for (let i = 0; i < table.rows[0].cells.length; i++) {
-        const newCell = newRow.insertCell(i);
-        if (i === table.rows[0].cells.length - 1) {
-            const button = document.createElement('a');
-            button.textContent = 'Remove Row';
-            button.onclick = function() {
-                table.deleteRow(newRow.rowIndex);
-                tableData.splice(newRow.rowIndex - 1, 1);
-                localStorage.setItem('tableData', JSON.stringify(tableData));
+    loadTableData();
+});
+
+function showNotification(message) {
+    // Browser notification
+    if (Notification.permission === 'granted') {
+        new Notification('Table Update', { body: message });
+    }
+
+    // In-page notification
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function addRow() {
+    const tbody = document.getElementById('tableBody');
+    const newRow = document.createElement('tr');
+    const fields = ['Activity', 'Item', 'Quantity', 'Unit', 'Due Date', 'Remarks'];
+    
+    fields.forEach(() => {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.addEventListener('change', saveTableData);
+        td.appendChild(input);
+        newRow.appendChild(td);
+    });
+
+    // Add remove button
+    const actionTd = document.createElement('td');
+    const removeBtn = document.createElement('a');
+    removeBtn.textContent = '❌ Remove';
+    removeBtn.href = '#';
+    removeBtn.className = 'remove-btn';
+    removeBtn.onclick = function() {
+        newRow.remove();
+        saveTableData();
+        showNotification('Row removed successfully');
+    };
+    actionTd.appendChild(removeBtn);
+    newRow.appendChild(actionTd);
+
+    tbody.appendChild(newRow);
+    showNotification('New row added successfully');
+    saveTableData();
+}
+
+function saveTableData() {
+    const tbody = document.getElementById('tableBody');
+    const data = [];
+    
+    tbody.querySelectorAll('tr').forEach(row => {
+        const rowData = [];
+        row.querySelectorAll('input').forEach(input => {
+            rowData.push(input.value);
+        });
+        data.push(rowData);
+    });
+
+    localStorage.setItem('tableData', JSON.stringify(data));
+}
+
+function loadTableData() {
+    const savedData = localStorage.getItem('tableData');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        data.forEach(rowData => {
+            const tbody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            
+            rowData.forEach(cellData => {
+                const td = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = cellData;
+                input.addEventListener('change', saveTableData);
+                td.appendChild(input);
+                newRow.appendChild(td);
+            });
+
+            // Add remove button
+            const actionTd = document.createElement('td');
+            const removeBtn = document.createElement('a');
+            removeBtn.textContent = '❌ Remove';
+            removeBtn.href = '#';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = function() {
+                newRow.remove();
+                saveTableData();
+                showNotification('Row removed successfully');
             };
-            newCell.appendChild(button);
-        } else if (i <= 2) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.style.textAlign = 'center';
-            input.style.border = 'none';
-            input.style.color = 'inherit';
-            input.style.backgroundColor = 'inherit';
-            input.oninput = function() {
-                tableData[newRow.rowIndex - 1][i] = input.value;
-                localStorage.setItem('tableData', JSON.stringify(tableData));
-            };
-            newCell.appendChild(input);
-        } else {
-            const input = document.createElement('input');
-            input.type = 'date';
-            input.style.textAlign = 'center';
-            input.style.border = 'none';
-            input.style.color = 'inherit';
-            input.style.backgroundColor = 'inherit';
-            input.oninput = function() {
-                tableData[newRow.rowIndex - 1][i] = input.value;
-                localStorage.setItem('tableData', JSON.stringify(tableData));
-            };
-            newCell.appendChild(input);
-        }
+            actionTd.appendChild(removeBtn);
+            newRow.appendChild(actionTd);
+
+            tbody.appendChild(newRow);
+        });
     }
 }
 
-// Load existing data into the table on page load
-window.onload = function() {
-    const table = document.getElementById('activityTable');
-    const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
-    tableData.forEach(rowData => {
-        const newRow = table.insertRow();
-        rowData.forEach((cellData, i) => {
-            const newCell = newRow.insertCell(i);
-            if (i === table.rows[0].cells.length - 1) {
-                const button = document.createElement('a');
-                button.textContent = 'Remove Row';
-                button.onclick = function() {
-                    table.deleteRow(newRow.rowIndex);
-                    tableData.splice(newRow.rowIndex - 1, 1);
-                    localStorage.setItem('tableData', JSON.stringify(tableData));
-                };
-                newCell.appendChild(button);
-            } else if (i <= 2) {
+function insertTable() {
+    const excelData = document.getElementById('excelData').value;
+    const rows = excelData.split('\n');
+    
+    rows.forEach(row => {
+        const cells = row.split('\t');
+        if (cells.length > 1) {
+            const tbody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            
+            cells.forEach(cellData => {
+                const td = document.createElement('td');
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.style.textAlign = 'center';
-                input.style.border = 'none';
-                input.style.color = 'inherit';
-                input.style.backgroundColor = 'inherit';
-                input.value = cellData;
-                input.oninput = function() {
-                    tableData[newRow.rowIndex - 1][i] = input.value;
-                    localStorage.setItem('tableData', JSON.stringify(tableData));
-                };
-                newCell.appendChild(input);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'date';
-                input.style.textAlign = 'center';
-                input.style.border = 'none';
-                input.style.color = 'inherit';
-                input.style.backgroundColor = 'inherit';
-                input.value = cellData;
-                input.oninput = function() {
-                    tableData[newRow.rowIndex - 1][i] = input.value;
-                    localStorage.setItem('tableData', JSON.stringify(tableData));
-                };
-                newCell.appendChild(input);
-            }
-        });
-    });
-};
+                input.value = cellData.trim();
+                input.addEventListener('change', saveTableData);
+                td.appendChild(input);
+                newRow.appendChild(td);
+            });
 
+            // Add remove button
+            const actionTd = document.createElement('td');
+            const removeBtn = document.createElement('a');
+            removeBtn.textContent = '❌ Remove';
+            removeBtn.href = '#';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = function() {
+                newRow.remove();
+                saveTableData();
+                showNotification('Row removed successfully');
+            };
+            actionTd.appendChild(removeBtn);
+            newRow.appendChild(actionTd);
+
+            tbody.appendChild(newRow);
+        }
+    });
+    
+    saveTableData();
+    showNotification('Table data inserted successfully');
+    document.getElementById('excelData').value = '';
+}
+
+function notify() {
+    showNotification('Notification test');
+}

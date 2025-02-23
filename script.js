@@ -121,7 +121,7 @@ function showNotification(message) {
 function addRow() {
     const tbody = document.getElementById('tableBody');
     const newRow = document.createElement('tr');
-    const fields = ['Activity', 'Item', 'Quantity', 'Unit', 'Due Date', 'Remarks'];
+    const fields = ['Activity', 'Frequency', 'Worked by', 'Last Maintenance', 'Due Date', 'Remarks'];
     
     fields.forEach(() => {
         const td = document.createElement('td');

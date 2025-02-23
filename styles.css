@@ -419,3 +419,31 @@ margin-left: 3%;
 background-color: #0d0d9e;
 transform: scale(.9); 
 }
+.drop {
+  position: relative;
+  display: inline-block;
+}
+.dropmenu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropmenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.drop-content li {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropmenu li:hover {
+  background-color: #ddd;
+}
+.drop:hover .dropmenu {
+  display: block;
+}

@@ -1,3 +1,100 @@
+let notifications = [];
+        let notificationCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission();
+            }
+            loadTableData();
+            loadNotifications();
+        });
+
+        function loadNotifications() {
+            const savedNotifications = localStorage.getItem('notifications');
+            if (savedNotifications) {
+                notifications = JSON.parse(savedNotifications);
+                updateNotificationCount();
+                renderNotifications();
+            }
+        }
+
+        function saveNotifications() {
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+        }
+
+        function addNotification(message) {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                timestamp: new Date().toLocaleString()
+            };
+            notifications.unshift(notification);
+            if (notifications.length > 50) {
+                notifications.pop();
+            }
+            saveNotifications();
+            updateNotificationCount();
+            renderNotifications();
+        }
+
+        function updateNotificationCount() {
+            const countElement = document.getElementById('notification-count');
+            notificationCount = notifications.length;
+            countElement.textContent = notificationCount;
+            countElement.style.display = notificationCount > 0 ? 'flex' : 'none';
+        }
+
+        function renderNotifications() {
+            const notificationList = document.getElementById('notification-list');
+            notificationList.innerHTML = '';
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item';
+                notificationItem.innerHTML = `
+                    <div>${notification.message}</div>
+                    <small>${notification.timestamp}</small>
+                `;
+                notificationList.appendChild(notificationItem);
+            });
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notification-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.notification-bell, .notification-bell *')) {
+                const dropdowns = document.getElementsByClassName('notification-dropdown');
+                for (let dropdown of dropdowns) {
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function showNotification(message) {
+            // Add to notifications list
+            addNotification(message);
+
+            // Browser notification
+            if (Notification.permission === 'granted') {
+                new Notification('Table Update', { body: message });
+            }
+
+            // In-page notification
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notification-message');
+            notificationMessage.textContent = message;
+            notification.style.display = 'flex';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+
 // Request notification permission when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     if (Notification.permission !== 'granted') {

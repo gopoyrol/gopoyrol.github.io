@@ -325,27 +325,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-    // Your existing code such as loadTableData(), loadNotifications(), etc.
-    
-    // Hamburger toggle functionality
-    const hamburger = document.querySelector('.hamburger');
-  const navContent = document.querySelector('.nav-content');
-  
-  if (hamburger && navContent) {
-    hamburger.addEventListener('click', function() {
-      console.log("Hamburger clicked"); // Debug: Check if click event fires
-      navContent.classList.toggle('active');
-    });
-  }
-  
-  // Mobile dropdown toggle functionality (for Inventory dropdown)
-  const dropbtns = document.querySelectorAll('.dropdown > .dropbtn');
-  dropbtns.forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      if (window.innerWidth <= 768) {
-        e.preventDefault(); // Prevent default link behavior on mobile
-        this.parentElement.classList.toggle('active');
+      // Hamburger toggle functionality
+      const hamburger = document.querySelector('.hamburger');
+      const navContent = document.querySelector('.nav-content');
+      
+      if (hamburger && navContent) {
+        hamburger.addEventListener('click', function() {
+          navContent.classList.toggle('active');
+        });
       }
+      
+      // Mobile dropdown toggle functionality for each dropdown
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach(function(dropdown) {
+        const dropbtn = dropdown.querySelector('.dropbtn');
+        if (dropbtn) {
+          dropbtn.addEventListener('click', function(e) {
+            // Only apply mobile behavior when viewport is 768px or less
+            if (window.innerWidth <= 768) {
+              e.preventDefault(); // Prevent link navigation
+              dropdown.classList.toggle('active');
+            }
+          });
+        }
+      });
     });
-  });
-});

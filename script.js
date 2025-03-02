@@ -1,5 +1,5 @@
 /**
- * Check due date for a row and display a notification if overdue or due soon.
+ * Checks the due date for a row and shows a notification if overdue or due soon.
  * Uses row.dataset.lastNotification to avoid repeating the same message.
  */
 function checkDueDate(row, dueDate) {
@@ -7,29 +7,29 @@ function checkDueDate(row, dueDate) {
   const today = new Date();
   const dueDateTime = new Date(dueDate);
   if (isNaN(dueDateTime)) return;
-  
+
   const diffDays = Math.ceil((dueDateTime - today) / (1000 * 60 * 60 * 24));
+  const formattedDueDate = dueDateTime.toLocaleDateString();
   row.classList.remove("due-soon", "overdue");
   
   let message = "";
-  const formattedDueDate = dueDateTime.toLocaleDateString();
-  
   if (diffDays < 0) {
     row.classList.add("overdue");
-    message = `Overdue: "${row.cells[0].querySelector("input").value}" (Due: ${formattedDueDate}) is past due!`;
+    message = `Overdue: "${row.cells[0].querySelector("input").value}" is past due (Due: ${formattedDueDate})!`;
   } else if (diffDays <= 7) {
     row.classList.add("due-soon");
-    message = `Due soon: "${row.cells[0].querySelector("input").value}" (Due: ${formattedDueDate}) is due in ${diffDays} day(s).`;
+    message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
   }
   
-  // Only show a notification if this is a new message
+  // Debug log
+  console.log("checkDueDate:", message);
+  
+  // Only notify if this message hasn't been shown before for this row
   if (message && row.dataset.lastNotification !== message) {
     row.dataset.lastNotification = message;
-    showNotification(message);
+    showNotification("message");
   }
 }
-
-
 /**
  * Saves table data from the table body into localStorage.
  */
@@ -38,7 +38,7 @@ function saveTableData() {
   const data = [];
   tbody.querySelectorAll("tr").forEach(row => {
     const rowData = [];
-    // Save the first 6 input values (skip the Actions cell)
+    // Save the first 6 input values (skip Actions cell)
     row.querySelectorAll("input").forEach(input => {
       rowData.push(input.value);
     });
@@ -56,14 +56,13 @@ function addRow() {
   const tbody = document.getElementById("tableBody");
   const newRow = document.createElement("tr");
   let tableData = JSON.parse(localStorage.getItem("tableData")) || [];
-  
-  // Create an empty row of length = number of cells in header
+
+  // Create an empty row for the first 6 cells
   const newRowData = [...Array(table.rows[0].cells.length)].map(() => "");
-  // Optionally push the empty row data
   tableData.push(newRowData);
   localStorage.setItem("tableData", JSON.stringify(tableData));
-  
-  // Define cell structure: 0-2 text, 3-5 date.
+
+  // Define structure: first 3 cells text, next 3 cells date
   const cellStructure = [
     { type: "text", placeholder: "Enter activity" },
     { type: "text", placeholder: "Enter frequency" },
@@ -72,14 +71,14 @@ function addRow() {
     { type: "date", placeholder: "Due Date" },
     { type: "date", placeholder: "Enter remarks date" }
   ];
-  
+
   cellStructure.forEach((cell, index) => {
     const td = document.createElement("td");
     const input = document.createElement("input");
     input.type = cell.type;
     if (cell.placeholder) input.placeholder = cell.placeholder;
     input.style.textAlign = "center";
-    
+
     if (index === 4) { // Due Date column
       input.addEventListener("change", () => {
         const parsedDate = new Date(input.value);
@@ -92,18 +91,17 @@ function addRow() {
     } else {
       input.addEventListener("change", saveTableData);
     }
-    
     td.appendChild(input);
     newRow.appendChild(td);
   });
-  
-  // Create Actions cell with Remove button
+
+  // Actions cell with Remove button
   const actionTd = document.createElement("td");
   const removeBtn = document.createElement("a");
-  removeBtn.textContent = "❌";
+  removeBtn.textContent = "❌ Remove Row";
   removeBtn.href = "#";
   removeBtn.className = "remove-btn";
-  removeBtn.onclick = function() {
+  removeBtn.onclick = function () {
     const tbody = document.getElementById("tableBody");
     const rows = Array.from(tbody.children);
     const index = rows.indexOf(newRow);
@@ -114,12 +112,15 @@ function addRow() {
       newRow.remove();
       saveTableData();
       showNotification("Row removed successfully");
-      document.getElementById("activityTable").scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("activityTable").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     }
   };
   actionTd.appendChild(removeBtn);
   newRow.appendChild(actionTd);
-  
+
   tbody.appendChild(newRow);
   saveTableData();
 }
@@ -156,14 +157,13 @@ function loadTableData() {
         td.appendChild(input);
         newRow.appendChild(td);
       }
-      
       // Actions cell with Remove button
       const actionTd = document.createElement("td");
       const removeBtn = document.createElement("a");
-      removeBtn.textContent = "❌";
+      removeBtn.textContent = "❌ Remove Row";
       removeBtn.href = "#";
       removeBtn.className = "remove-btn";
-      removeBtn.onclick = function() {
+      removeBtn.onclick = function () {
         const tbody = document.getElementById("tableBody");
         const rows = Array.from(tbody.children);
         const index = rows.indexOf(newRow);
@@ -178,7 +178,6 @@ function loadTableData() {
       };
       actionTd.appendChild(removeBtn);
       newRow.appendChild(actionTd);
-      
       tbody.appendChild(newRow);
       checkDueDate(newRow, rowData[4]);
     });
@@ -186,7 +185,7 @@ function loadTableData() {
 }
 
 /**
- * Checks due dates for all rows in the table.
+ * Checks due dates for all rows.
  */
 function checkAllDueDates() {
   const tbody = document.getElementById("tableBody");
@@ -237,12 +236,61 @@ document.addEventListener("DOMContentLoaded", function() {
     addRowBtn.addEventListener("click", addRow);
   }
 });
-function clearTable() {
-  // Remove table data from localStorage
-  localStorage.removeItem("tableData");
-  // Clear all rows from the table body
-  const tbody = document.getElementById("tableBody");
-  if (tbody) {
-    tbody.innerHTML = "";
+// Debug version of showNotification function
+function showNotification(message) {
+  console.log("showNotification called with message:", message);
+  
+  // In-page popup notification
+  const popup = document.getElementById("notification");
+  if (popup) {
+    popup.textContent = message;
+    popup.style.display = "block";
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 3000);
+  }
+  
+  // Append notification to the notification list
+  const notifList = document.getElementById("notification-list");
+  if (notifList) {
+    const div = document.createElement("div");
+    div.className = "notification-item";
+    div.textContent = message;
+    // Optionally, add a dismiss button:
+    const dismissBtn = document.createElement("button");
+    dismissBtn.textContent = "✖";
+    dismissBtn.onclick = function () {
+      div.remove();
+    };
+    div.appendChild(dismissBtn);
+    
+    notifList.appendChild(div);
   }
 }
+
+// Updated checkDueDate function
+function checkDueDate(row, dueDate) {
+  if (!dueDate) return;
+  const today = new Date();
+  const dueDateTime = new Date(dueDate);
+  if (isNaN(dueDateTime)) return;
+  
+  const diffDays = Math.ceil((dueDateTime - today) / (1000 * 60 * 60 * 24));
+  const formattedDueDate = dueDateTime.toLocaleDateString();
+  
+  row.classList.remove("due-soon", "overdue");
+  let message = "";
+  if (diffDays < 0) {
+    row.classList.add("overdue");
+    message = `Overdue: "${row.cells[0].querySelector("input").value}" is past due (Due: ${formattedDueDate})!`;
+  } else if (diffDays <= 7) {
+    row.classList.add("due-soon");
+    message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
+  }
+  console.log("checkDueDate:", message);
+  if (message && row.dataset.lastNotification !== message) {
+    row.dataset.lastNotification = message;
+    showNotification(message);
+  }
+}
+

@@ -315,11 +315,11 @@ transform: scale(.9);
     transform: scale(1);
   }
 }
-
-/* Table Styles (Using your provided style) */
+  /* Table Styles (Using your provided style) */
 .table {
   width: 100%;
-  height: 50%; /* Full viewport height */
+  height: 60vh; /* Full viewport height */
+  overflow-y: auto;
 }
 .table textarea {
   width: 95%;
@@ -348,6 +348,7 @@ transform: scale(.9);
   flex-direction: column;
   margin-top: 2%;
   border-collapse: collapse;
+  margin-bottom: 10px;
 }
 .table th {
   background-color: rgba(43, 88, 235, 0.829);
@@ -356,6 +357,7 @@ transform: scale(.9);
 }
 .table tr {
   width: 100%;
+  height: auto;
 }
 .table td {
   padding: 0.6rem;
@@ -372,7 +374,7 @@ tr:nth-child(even) {
 }
 
 .footer {
-  height: 100px;
+  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;

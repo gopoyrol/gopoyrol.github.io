@@ -160,7 +160,7 @@ function loadTableData() {
       // Actions cell with Remove button
       const actionTd = document.createElement("td");
       const removeBtn = document.createElement("a");
-      removeBtn.textContent = "❌ Remove Row";
+      removeBtn.textContent = "❌";
       removeBtn.href = "#";
       removeBtn.className = "remove-btn";
       removeBtn.onclick = function() {

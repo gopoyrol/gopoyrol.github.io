@@ -206,7 +206,6 @@ setInterval(checkAllDueDates, 60000);
 document.addEventListener("DOMContentLoaded", function() {
   loadTableData();
   checkAllDueDates();
-  loadNotifications();
   
   // Hamburger toggle functionality (if applicable)
   const hamburger = document.querySelector(".hamburger");
@@ -268,22 +267,7 @@ function showNotification(message) {
     notifList.appendChild(div);
   }
 }
-function sendEmailNotification(message) {
-  // Only send email if the role is "staff" and a staffEmail is set
-  if (localStorage.getItem("role") === "staff") {
-    const staffEmail = localStorage.getItem("staffEmail");
-    if (staffEmail) {
-      emailjs.send("service_5efo2h9", "template_b7exqii", {
-        to_email: staffEmail,
-        message: message
-      }).then(function(response) {
-        console.log("Email sent!", response.status, response.text);
-      }, function(error) {
-        console.error("Failed to send email:", error);
-      });
-    }
-  }
-}
+
 // Updated checkDueDate function
 function checkDueDate(row, dueDate) {
   if (!dueDate) return;
@@ -293,8 +277,8 @@ function checkDueDate(row, dueDate) {
   
   const diffDays = Math.ceil((dueDateTime - today) / (1000 * 60 * 60 * 24));
   const formattedDueDate = dueDateTime.toLocaleDateString();
-  row.classList.remove("due-soon", "overdue");
   
+  row.classList.remove("due-soon", "overdue");
   let message = "";
   if (diffDays < 0) {
     row.classList.add("overdue");
@@ -303,54 +287,10 @@ function checkDueDate(row, dueDate) {
     row.classList.add("due-soon");
     message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
   }
-  
   console.log("checkDueDate:", message);
-  
-  // Only trigger notification if this is a new message
   if (message && row.dataset.lastNotification !== message) {
     row.dataset.lastNotification = message;
-    showNotification(message);  // Pass the actual message variable
-    sendEmailNotification(message); // Send email notification for staff
-  }
-}
-
-function loadNotifications() {
-  notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-  renderNotifications();
-}
-document.addEventListener("DOMContentLoaded", function() {
-  const hamburger = document.querySelector(".hamburger");
-  const navContent = document.querySelector(".nav-content");
-  if (hamburger && navContent) {
-    hamburger.addEventListener("click", function() {
-      navContent.classList.toggle("active");
-    });
-  }
-});
-// Function to send an email notification via EmailJS for staff
-// Function to send email notifications via EmailJS (for staff)
-
-
-if (message && row.dataset.lastNotification !== message) {
-  row.dataset.lastNotification = message;
-  // Only notify if role is not student
-  if (localStorage.getItem("role") !== "student") {
     showNotification(message);
-    // Optionally, send email notification for staff/owner
-    // sendEmailNotification(message);
   }
-}
-function testEmailNotification() {
-  // This function will send a test email notification using EmailJS.
-  // It will only work if the logged-in role is "staff" and a valid staffEmail is stored.
-  sendEmailNotification("Test email notification from maintenance page.");  
-  console.log("Test email notification triggered.");
 }
 
-// For testing purposes, call the test function when the page loads (only for staff)
-document.addEventListener("DOMContentLoaded", function() {
-  if (localStorage.getItem("role") === "staff") {
-    // Delay a bit to ensure everything loads, then call test
-    setTimeout(testEmailNotification, 2000);
-  }
-});

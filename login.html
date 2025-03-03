@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - MOHTIW System</title>
   <link rel="stylesheet" href="/Styles/login.css" />
-  <!-- Include EmailJS if you wish to notify the owner -->
-  <script src="https://dashboard.emailjs.com/admin/account"></script>
-  <script>
-    emailjs.init("Vl_DNuJxc0jNOFa6L"); // Replace with your EmailJS user ID
-  </script>
 </head>
 <body>
   <div class="login-container">
@@ -29,7 +24,11 @@
     <div id="loginError" style="color:red; display:none;"></div>
     <div id="loginMessage" style="color:green; display:none;"></div>
   </div>
-  
+  <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+    <script>
+    emailjs.init("Vl_DNuJxc0jNOFa6L"); // Replace YOUR_PUBLIC_KEY with your actual EmailJS public key
+    </script>
+  <script src="script.js" defer></script>
   <script>
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();

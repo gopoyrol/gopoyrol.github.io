@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Dashboard - MOHTIW System</title>
+  <link rel="stylesheet" href="/Styles/owner.css" />
+</head>
+<body>
+  <h1>Owner Dashboard</h1>
+  
+  <section>
+    <h2>Set Owner Email</h2>
+    <input type="email" id="ownerEmailInput" placeholder="Enter owner email" />
+    <button onclick="setOwnerEmail()">Save</button>
+  </section>
+  
+  <section>
+    <h2>Pending Staff Requests</h2>
+    <ul id="pendingList"></ul>
+  </section>
+  
+  <section>
+    <h2>Approved Staff</h2>
+    <ul id="approvedList"></ul>
+  </section>
+  
+  <script>
+    function setOwnerEmail(){
+      const email = document.getElementById("ownerEmailInput").value.trim();
+      if(email){
+        localStorage.setItem("ownerEmail", email);
+        alert("Owner email set.");
+      }
+    }
+    
+    function loadPendingStaff(){
+      const pendingList = document.getElementById("pendingList");
+      pendingList.innerHTML = "";
+      const pending = JSON.parse(localStorage.getItem("pendingStaff")) || [];
+      pending.forEach(email => {
+        const li = document.createElement("li");
+        li.textContent = email;
+        const approveBtn = document.createElement("button");
+        approveBtn.textContent = "Approve";
+        approveBtn.onclick = function(){
+          let pending = JSON.parse(localStorage.getItem("pendingStaff")) || [];
+          pending = pending.filter(e => e !== email);
+          localStorage.setItem("pendingStaff", JSON.stringify(pending));
+          
+          let approved = JSON.parse(localStorage.getItem("approvedStaff")) || [];
+          if(!approved.includes(email)){
+            approved.push(email);
+            localStorage.setItem("approvedStaff", JSON.stringify(approved));
+          }
+          loadPendingStaff();
+          loadApprovedStaff();
+        };
+        li.appendChild(approveBtn);
+        pendingList.appendChild(li);
+      });
+    }
+    
+    function loadApprovedStaff(){
+      const approvedList = document.getElementById("approvedList");
+      approvedList.innerHTML = "";
+      const approved = JSON.parse(localStorage.getItem("approvedStaff")) || [];
+      approved.forEach(email => {
+        const li = document.createElement("li");
+        li.textContent = email;
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.onclick = function(){
+          let approved = JSON.parse(localStorage.getItem("approvedStaff")) || [];
+          approved = approved.filter(e => e !== email);
+          localStorage.setItem("approvedStaff", JSON.stringify(approved));
+          loadApprovedStaff();
+        };
+        li.appendChild(removeBtn);
+        approvedList.appendChild(li);
+      });
+    }
+    
+    document.addEventListener("DOMContentLoaded", function(){
+      loadPendingStaff();
+      loadApprovedStaff();
+    });
+  </script>
+</body>
+</html>

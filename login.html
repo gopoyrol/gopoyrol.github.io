@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - MOHTIW System</title>
+  <link rel="stylesheet" href="/Styles/login.css" />
+  <!-- Include EmailJS if you wish to notify the owner -->
+  <script src="https://dashboard.emailjs.com/admin/account"></script>
+  <script>
+    emailjs.init("Vl_DNuJxc0jNOFa6L"); // Replace with your EmailJS user ID
+  </script>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <div class="radio-group">
+        <label>
+          <input type="radio" name="role" value="staff" checked> Staff
+        </label>
+        <label>
+          <input type="radio" name="role" value="student"> Student
+        </label>
+      </div>
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <button type="submit">Login</button>
+    </form>
+    <div id="loginError" style="color:red; display:none;"></div>
+    <div id="loginMessage" style="color:green; display:none;"></div>
+  </div>
+  
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const role = document.querySelector('input[name="role"]:checked').value;
+      const email = document.getElementById("email").value.trim();
+      
+      console.log("Role:", role, "Email:", email);
+      
+      // Enforce domain for staff/owner
+      if ((role === "staff" || role === "owner") && !email.endsWith("@maryourhelp-cebu.edu.ph")) {
+        document.getElementById("loginError").textContent = "Staff/Owner must use a @maryourhelp-cebu.edu.ph email.";
+        document.getElementById("loginError").style.display = "block";
+        return;
+      }
+      
+      localStorage.setItem("role", role);
+      if (role === "staff") {
+        localStorage.setItem("staffEmail", email);
+        console.log("Redirecting to maintenance.html for staff");
+        window.location.href = "maintenance.html";
+      } else if (role === "owner") {
+        localStorage.setItem("ownerEmail", email);
+        console.log("Redirecting to owner.html for owner");
+        window.location.href = "owner.html";
+      } else {
+        console.log("Redirecting to index.html for student");
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>

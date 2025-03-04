@@ -11,7 +11,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(86, 119, 226, 0.603);
+  background-color: rgb(32, 60, 223);
   border-radius: 8px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 }
@@ -31,7 +31,7 @@ body {
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 }
 .navbar .LOGO {
-  color: #ffffff;
+  color: #000000;
   font-size: 1.5em;
   font-weight: bold;
   padding-left: 10px;
@@ -48,7 +48,7 @@ body {
   padding: 20px;
 }
 .nav-content ul li a {
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
   display: inline-block;
   font-size: 1.2em;
@@ -59,17 +59,17 @@ body {
   gap: 25px;
 }
 .navbar a {
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
 }
 .navbar li:hover {
-  background-color: #fff;
-  color: #333;
+  background-color: #143285;
+  color: #ffffff;
   transform: scale(.8);
   border-radius: 10px;
 }
 .navbar li:hover a{
-  color: #333;
+  color: #ffffff;
 }
 .dropdown {
 position: relative;
@@ -77,7 +77,7 @@ display: inline-block;
 text-align: center;
 }
 .dropbtn {
-background-color: rgb(86, 119, 226);
+background-color: inherit;
 color: white;
 font-size: 16px;
 border: none;
@@ -107,7 +107,7 @@ border-radius: 20px;
 }
 .dropdown-content a:hover {background-color: rgb(86, 119, 226);}
 .dropdown:hover .dropdown-content {display: block;}
-.dropdown:hover .dropbtn {background-color: rgb(252, 252, 252);}
+.dropdown:hover .dropbtn {background-color: inherit;}
 
 section {
   height: 100vh;
@@ -177,8 +177,8 @@ padding-bottom: 20px;
 }
 .inventory button {
   padding: 30px 50px;
-  background-color: #111fe0;
-  color: #fdfdfd;
+  background-color: #f8f8f8;
+  color: #0e2488;
   border: none;
   border-radius: 9px;
   cursor: pointer;
@@ -186,7 +186,8 @@ padding-bottom: 20px;
   font-weight: bold;
 }
 .inventory button:hover {
-  background-color: #0d0d9e;
+  background-color: #1013d6;
+  color: #fdfdfd;
   transform: scale(.9);
 }
 .db-inv a, .mm-inv a, .aux-inv a { 

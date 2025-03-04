@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - MOHTIW System</title>
   <link rel="stylesheet" href="/Styles/login.css" />
+  <!-- Include EmailJS if needed -->
+  <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+  <script>
+    emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your actual EmailJS public key
+  </script>
 </head>
 <body>
   <div class="login-container">
@@ -13,6 +18,9 @@
       <div class="radio-group">
         <label>
           <input type="radio" name="role" value="staff" checked> Staff
+        </label>
+        <label>
+          <input type="radio" name="role" value="owner"> Owner
         </label>
         <label>
           <input type="radio" name="role" value="student"> Student
@@ -24,11 +32,7 @@
     <div id="loginError" style="color:red; display:none;"></div>
     <div id="loginMessage" style="color:green; display:none;"></div>
   </div>
-  <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
-    <script>
-    emailjs.init("Vl_DNuJxc0jNOFa6L"); // Replace YOUR_PUBLIC_KEY with your actual EmailJS public key
-    </script>
-  <script src="script.js" defer></script>
+  
   <script>
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -37,7 +41,7 @@
       
       console.log("Role:", role, "Email:", email);
       
-      // Enforce domain for staff/owner
+      // For staff and owner, enforce the proper email domain
       if ((role === "staff" || role === "owner") && !email.endsWith("@maryourhelp-cebu.edu.ph")) {
         document.getElementById("loginError").textContent = "Staff/Owner must use a @maryourhelp-cebu.edu.ph email.";
         document.getElementById("loginError").style.display = "block";
@@ -45,16 +49,29 @@
       }
       
       localStorage.setItem("role", role);
+      
       if (role === "staff") {
         localStorage.setItem("staffEmail", email);
-        console.log("Redirecting to maintenance.html for staff");
-        window.location.href = "maintenance.html";
+        // Check approvedStaff list (an array stored in localStorage)
+        let approvedStaff = JSON.parse(localStorage.getItem("approvedStaff")) || [];
+        if (approvedStaff.includes(email)) {
+          // If approved, redirect to maintenance page
+          window.location.href = "maintenance.html";
+        } else {
+          // Otherwise, add to pendingStaff (if not already pending) and show a message
+          let pendingStaff = JSON.parse(localStorage.getItem("pendingStaff")) || [];
+          if (!pendingStaff.includes(email)) {
+            pendingStaff.push(email);
+            localStorage.setItem("pendingStaff", JSON.stringify(pendingStaff));
+          }
+          document.getElementById("loginMessage").textContent = "Your account is pending owner approval. Please wait.";
+          document.getElementById("loginMessage").style.display = "block";
+        }
       } else if (role === "owner") {
         localStorage.setItem("ownerEmail", email);
-        console.log("Redirecting to owner.html for owner");
         window.location.href = "owner.html";
       } else {
-        console.log("Redirecting to index.html for student");
+        // For students, redirect to home page (index.html) and disable editing on interactive pages
         window.location.href = "index.html";
       }
     });

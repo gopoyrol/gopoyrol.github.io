@@ -386,18 +386,38 @@ tr:nth-child(even) {
 /* Responsive Styles */
 @media (max-width: 768px) {
   /* Navbar adjustments */
-  .navbar {
-      padding: 10px;
-      text-align: center;
+  .nav-content {
+    display: none; /* Hidden by default on mobile */
+    flex-direction: column;
+    width: 100%;
+    background-color: rgba(86, 119, 226, 0.9);
   }
-  .nav-content ul {
-      flex-direction: column;
-      padding: 0;
+  .nav-content.active {
+    display: flex;
   }
-  .nav-content ul li {
-      padding: 10px;
+  .hamburger {
+    display: flex;
+    cursor: pointer;
+  }
+  .hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #fff;
+    margin: 4px 0;
   }
   
+  /* Center login container and adjust its width */
+  .login-container {
+    width: 90%;
+    padding: 1rem;
+    margin: 0 auto;
+  }
+   
+  /* Reduce font sizes for better readability on small screens */
+  body {
+    font-size: 0.9rem;
+}
+
   /* Section adjustments */
   .about, .contacts {
       margin: 5%;

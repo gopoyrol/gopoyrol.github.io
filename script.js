@@ -1,7 +1,45 @@
 /**
- * Checks the due date for a row and shows a notification if overdue or due soon.
- * Uses row.dataset.lastNotification to avoid repeating the same message.
+ * Checks the due date for a row and sends a notification (and email for staff)
+ * if the task is overdue or due soon.
+ * It uses row.dataset.lastNotification to avoid duplicate notifications.
  */
+// function checkDueDate(row, dueDate) {
+//   if (!dueDate) return;
+//   const today = new Date();
+//   const dueDateTime = new Date(dueDate);
+//   if (isNaN(dueDateTime)) return;
+
+//   const diffDays = Math.ceil((dueDateTime - today) / (1000 * 60 * 60 * 24));
+//   const formattedDueDate = dueDateTime.toLocaleDateString();
+//   row.classList.remove("due-soon", "overdue");
+  
+//   let message = "";
+//   if (diffDays < 0) {
+//     row.classList.add("overdue");
+//     message = `Overdue: "${row.cells[0].querySelector("input").value}" is past due (Due: ${formattedDueDate})!`;
+//   } else if (diffDays <= 7) {
+//     row.classList.add("due-soon");
+//     message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
+//   }
+  
+//   console.log("checkDueDate:", message);
+  
+//   if (message) {
+//     // Get the timestamp of the last email sent (if any)
+//     const lastEmailSent = row.dataset.lastEmailSent ? parseInt(row.dataset.lastEmailSent) : 0;
+//     const now = Date.now();
+//     const oneDay = 24 * 60 * 60 * 1000; // 24 hours in ms
+    
+//     // If no notification has been sent OR the message is different OR 24 hours have passed since the last email:
+//     if (!row.dataset.lastNotification || row.dataset.lastNotification !== message || (now - lastEmailSent) > oneDay) {
+//       row.dataset.lastNotification = message;
+//       row.dataset.lastEmailSent = now;  // Update the email sent timestamp
+//       showNotification(message);          // Display the in-page notification
+//       sendEmailNotification(message);       // Send the email notification
+//     }
+//   }
+// }
+
 function checkDueDate(row, dueDate) {
   if (!dueDate) return;
   const today = new Date();
@@ -21,15 +59,16 @@ function checkDueDate(row, dueDate) {
     message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
   }
   
-  // Debug log
   console.log("checkDueDate:", message);
   
-  // Only notify if this message hasn't been shown before for this row
+  // Only notify if this is a new message
   if (message && row.dataset.lastNotification !== message) {
     row.dataset.lastNotification = message;
-    showNotification("message");
+    showNotification(message);           // Pass the actual message variable
+    sendEmailNotification(message);        // Send email notification for staff
   }
 }
+
 /**
  * Saves table data from the table body into localStorage.
  */
@@ -267,30 +306,19 @@ function showNotification(message) {
     notifList.appendChild(div);
   }
 }
-
-// Updated checkDueDate function
-function checkDueDate(row, dueDate) {
-  if (!dueDate) return;
-  const today = new Date();
-  const dueDateTime = new Date(dueDate);
-  if (isNaN(dueDateTime)) return;
-  
-  const diffDays = Math.ceil((dueDateTime - today) / (1000 * 60 * 60 * 24));
-  const formattedDueDate = dueDateTime.toLocaleDateString();
-  
-  row.classList.remove("due-soon", "overdue");
-  let message = "";
-  if (diffDays < 0) {
-    row.classList.add("overdue");
-    message = `Overdue: "${row.cells[0].querySelector("input").value}" is past due (Due: ${formattedDueDate})!`;
-  } else if (diffDays <= 7) {
-    row.classList.add("due-soon");
-    message = `Due soon: "${row.cells[0].querySelector("input").value}" is due in ${diffDays} day(s) (Due: ${formattedDueDate}).`;
-  }
-  console.log("checkDueDate:", message);
-  if (message && row.dataset.lastNotification !== message) {
-    row.dataset.lastNotification = message;
-    showNotification(message);
+function sendEmailNotification(message) {
+  // Only send email if the role is "staff" and a staffEmail is set
+  if (localStorage.getItem("role") === "staff") {
+    const staffEmail = localStorage.getItem("staffEmail");
+    if (staffEmail) {
+      emailjs.send("service_5efo2h9", "template_b7exqii", {
+        to_email: staffEmail,
+        message: message
+      }).then(function(response) {
+        console.log("Email sent!", response.status, response.text);
+      }, function(error) {
+        console.error("Failed to send email:", error);
+      });
+    }
   }
 }
-

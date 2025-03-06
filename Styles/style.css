@@ -3,7 +3,7 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 body {
-  background-color: rgb(86, 119, 226);
+  background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
 }
@@ -12,7 +12,6 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: rgb(32, 60, 223);
-  border-radius: 8px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 }
 .header-img {
@@ -30,11 +29,13 @@ body {
   object-fit: cover;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 }
-.navbar .LOGO {
+.navbar .LOGO img {
   color: #000000;
-  font-size: 1.5em;
-  font-weight: bold;
+  width: 70px;
+  height: 70px;
+  padding: 10px;
   padding-left: 10px;
+  border-radius: 60px;
 }
 .nav-content ul {
   list-style-type: none;
@@ -115,7 +116,7 @@ section {
 }
 .about {
 margin: 10px 40px;
-background-color: rgb(86, 119, 226);
+background-color: inherit;
 display: flex;
 flex-direction: column;
 justify-content: center;
@@ -177,8 +178,8 @@ padding-bottom: 20px;
 }
 .inventory button {
   padding: 30px 50px;
-  background-color: #f8f8f8;
-  color: #0e2488;
+  background-color: rgba(193,40,114,1);
+  color: #ffffff;
   border: none;
   border-radius: 9px;
   cursor: pointer;
@@ -200,7 +201,7 @@ align-items: center;
 .mm-inv,
 .db-inv {
 margin: 15px 30px;
-background-color: rgb(86, 119, 226);
+background-color: inherit;
 flex-direction: column;
 align-items: center;
 font-size: 0.8vw;
@@ -208,9 +209,8 @@ font-size: 0.8vw;
 .aux-inv h1,
 .mm-inv h1,
 .db-inv h1 {
-display: flex;
 flex-wrap: wrap;
-font-size: 190%;
+font-size: 290%;
 font-weight: bold;
 justify-content: center;
 text-align: center;
@@ -227,22 +227,26 @@ padding: 0 3%;
 .mm-content h2,
 .db-content h2 {
 padding-top: 15px;
-font-size: 170%;
+font-size: 190%;
 padding-bottom: 15px;
 text-align: left;
 }
 .aux-content button,
 .mm-content button,
 .db-content button {
-padding: 15px 25px;
-background-color: #111fe0;
-color: #fdfdfd;
-border: none;
-border-radius: 9px;
-cursor: pointer;
-font-size: 18px;
-font-weight: bold;
-margin-left: 3%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background-color: rgba(193,40,114,1);
+  color: #fdfdfd;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 20px;
+  /* margin: 0 auto; Center the button */
 }
 .aux-content button:hover,
 .mm-content button:hover,

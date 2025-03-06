@@ -11,8 +11,13 @@ html, body {
     align-items: center;
     background-color: rgb(86, 119, 226);
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    background-image: linear-gradient(rgba(86, 119, 226, 0.8), rgba(86, 119, 226, 0.8)), url("/img/website\ cover_20250114_213052_0000.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
-  
+
   .login-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 8px;

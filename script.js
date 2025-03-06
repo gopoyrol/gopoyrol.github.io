@@ -322,3 +322,75 @@ function sendEmailNotification(message) {
     }
   }
 }
+document.addEventListener("DOMContentLoaded", function() {
+  const role = localStorage.getItem("role");
+  if (role === "student") {
+    const maintenanceLink = document.getElementById("maintenanceLink");
+    if (maintenanceLink) {
+      maintenanceLink.remove();
+    }
+  }
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const role = localStorage.getItem("role");
+  // If the role is student, update the home link to point to a student home page.
+  if (role === "student") {
+    const homeLink = document.getElementById("homeLink");
+    if (homeLink) {
+      homeLink.querySelector("a").href = "/Student.html"; // Change to student home page
+    }
+  }
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const role = localStorage.getItem("role");
+  // If the role is student, update the home link to point to a student home page.
+  if (role === "admin") {
+    const homeLink = document.getElementById("homeLink");
+    if (homeLink) {
+      homeLink.querySelector("a").href = "/owner.html"; // Change to student home page
+    }
+  }
+});
+// This function sets up the admin-only input behavior.
+function setupAdminInput(inputId) {
+  // List of approved admin emails (in lowercase for case-insensitive comparison)
+  const adminEmails = ["admin@admin", "superadmin@admin", "anotheradmin@admin"];
+  
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  
+  input.addEventListener("change", function() {
+    // Get the value, trimmed and converted to lowercase
+    const value = input.value.trim().toLowerCase();
+    if (adminEmails.includes(value)) {
+      console.log("Admin credentials recognized.");
+      enableAdminControls();
+      // Optionally, override the role stored in localStorage:
+      localStorage.setItem("role", "admin");
+    } else {
+      console.log("Admin credentials not recognized.");
+      disableAdminControls();
+    }
+  });
+}
+
+// Function to reveal admin-only elements
+function enableAdminControls() {
+  const adminElements = document.querySelectorAll(".admin-only");
+  adminElements.forEach(el => {
+    el.style.display = "block"; // Show the element
+  });
+}
+
+// Function to hide admin-only elements
+function disableAdminControls() {
+  const adminElements = document.querySelectorAll(".admin-only");
+  adminElements.forEach(el => {
+    el.style.display = "none"; // Hide the element
+  });
+}
+
+// Initialize the admin input when the page loads
+document.addEventListener("DOMContentLoaded", function() {
+  setupAdminInput("adminCode");
+});

@@ -1,85 +1,195 @@
-/* owner.css */
-body {
-    background-color: rgb(86, 119, 226);
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-    margin: 0;
-    padding: 20px;
-    color: #fff;
-  }
-  
-  h1, h2 {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  section {
-    max-width: 800px;
-    margin: 20px auto;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  input[type="email"] {
-    display: block;
-    margin: 0 auto 10px auto; /* Top: 0, Left/Right: auto, Bottom: 10px */
-    padding: 10px;
-    width: 80%;
-    max-width: 400px;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
+* {
+  transition: all 0.3s ease-in-out;
+}
 
-  button {
-    display: block;
-    margin: 0 auto 10px auto; /* Top: 0, Left/Right: auto, Bottom: 10px */
-    padding: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #111fe0;
-    color: #fff;
+/* owner.css */
+
+/* General Styles */
+body {
+  
+  background-color: rgb(86, 119, 226);
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin: 0;
+  color: #fff;
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(32, 60, 223);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 0 1rem;
+}
+
+.navbar .LOGO img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 10px;
+}
+
+.nav-content ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-content ul li {
+  margin: 0 10px;
+  background-color: rgb(32 60 223);
+}
+
+.nav-content ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 10px;
+}
+
+.navbar li:hover {
+  background-color: #143285;
+  color: #ffffff;
+  transform: scale(.8);
+  border-radius: 10px;
+}
+.navbar li:hover a{
+  color: #ffffff;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  margin: 0 10px;
+  padding: 10px;
+}
+
+/* The button that triggers the dropdown */
+.dropdown .dropbtn {
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+}
+
+/* The dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;      /* Position just below the parent */
+  left: 50%;      /* Position at 50% from the left of parent */
+  transform: translateX(-50%); /* Center align by shifting back half of its width */
+  background-color: rgb(26 48 178 / 56%);
+  min-width: 160px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 4px;
+}
+
+.dropdown-content a:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Header Image */
+.header-img img {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: cover;
+}
+
+/* Owner Dashboard */
+.owner-dashboard {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: rgba(255,255,255,0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.owner-dashboard h1 {
+  margin-bottom: 1rem;
+}
+
+.owner-dashboard section {
+  margin: 1rem 0;
+}
+
+.owner-dashboard input[type="email"] {
+  padding: 0.75rem;
+  width: 80%;
+  max-width: 400px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.owner-dashboard button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #111fe0;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin: 0.5rem;
+}
+
+.owner-dashboard button:hover {
+  background-color: #0d0d9e;
+}
+
+/* Staff Lists */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  background: rgba(0, 0, 0, 0.2);
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 480px) {
+  .owner-dashboard {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  .nav-content ul li a {
     font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
   }
-  
-  button:hover {
-    background-color: #0d0d9e;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  ul li {
-    background: rgba(0, 0, 0, 0.2);
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  @media (max-width: 480px) {
-    body {
-      padding: 10px;
-      font-size: 0.9rem;
-    }
-    
-    section {
-      margin: 10px auto;
-      padding: 15px;
-    }
-    
-    button, input[type="email"] {
-      width: 100%;
-      box-sizing: border-box;
-    }
-  }
-  
+}

@@ -111,6 +111,21 @@ border-radius: 20px;
 .dropdown:hover .dropdown-content {display: block;}
 .dropdown:hover .dropbtn {background-color: inherit;}
 
+.logout-button {
+  background-color: inherit;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.logout-button:hover {
+  background-color: #143285;
+  scale: 0.9;
+}
 section {
   height: 100vh;
   padding-bottom: 20px;
@@ -379,12 +394,24 @@ tr:nth-child(even) {
 }
 
 .footer {
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: rgb(26, 48, 178);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}
+
+.footer a {
+  color: white;
+  text-decoration: none;
   font-weight: bold;
-  background-color: rgb(252, 252, 252);
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
 
 /* Responsive Styles */

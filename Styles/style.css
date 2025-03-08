@@ -13,6 +13,7 @@ body {
   align-items: center;
   background-color: rgb(32, 60, 223);
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: #00000081 5px solid;
 }
 .header-img {
   top: 0;
@@ -186,9 +187,8 @@ padding-bottom: 20px;
   font-weight: bold;
 }
 .inventory button:hover {
-  background-color: #1013d6;
   color: #fdfdfd;
-  transform: scale(.9);
+  transform: scale(.87);
 }
 .db-inv a, .mm-inv a, .aux-inv a { 
 text-decoration: none;

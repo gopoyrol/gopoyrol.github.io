@@ -5,69 +5,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - MOHTIW System</title>
   <link rel="stylesheet" href="/Styles/login.css" />
-  
+  <!-- Include EmailJS SDK -->
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "Vl_DNuJxc0jNOFa6L",
+      });
+   })();
+    // Generate a random 6-digit OTP
+    function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+  </script>
 </head>
 <body>
   <div class="login-container">
     <h1>Login</h1>
-    <form id="loginForm">
-      <div class="radio-group">
-        <label>
-          <input type="radio" name="role" value="staff" checked> Staff
-        </label>
-        <label>
-          <input type="radio" name="role" value="student"> Student
-        </label>
-      </div>
-      <input type="email" id="email" placeholder="Enter your email" required>
-      <button type="submit">Login</button>
-    </form>
-    <div id="loginError" style="color:red; display:none;"></div>
-    <div id="loginMessage" style="color:green; display:none;"></div>
-  </div> 
+    
+    <!-- Step 1: Email and Role Input -->
+    <div id="step1">
+      <form id="loginForm">
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="role" value="staff" checked> Staff
+          </label>
+          <label>
+            <input type="radio" name="role" value="student"> Student
+          </label>
+        </div>
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <button type="submit" id="sendOTP">Send OTP</button>
+      </form>
+    </div>
+    
+    <!-- Step 2: OTP Verification -->
+    <div id="step2" class="hidden">
+      <form id="otpForm">
+        <input type="text" id="otpInput" placeholder="Enter OTP" required>
+        <button type="submit" id="verifyOTP">Verify OTP</button>
+      </form>
+    </div>
+    
+    <div id="loginError" class="error-message"></div>
+    <div id="loginMessage" class="message"></div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const loginForm = document.getElementById("loginForm");
-      if (!loginForm) return;
-      
+      const otpForm = document.getElementById("otpForm");
+      const loginError = document.getElementById("loginError");
+      const loginMessage = document.getElementById("loginMessage");
+
+      // Step 1: Handle email submission and send OTP
       loginForm.addEventListener("submit", function(e) {
         e.preventDefault();
+        // Hide previous messages
+        loginError.style.display = "none";
+        loginMessage.style.display = "none";
         
-        // Retrieve and process email (lowercase for consistency)
         let email = document.getElementById("email").value.trim().toLowerCase();
-        // Get the selected role from the radio buttons
         let role = document.querySelector('input[name="role"]:checked').value;
         
         console.log("Initial role:", role, "Email entered:", email);
         
-        // Define a list of approved admin emails (all in lowercase)
+        // List of approved admin emails (all in lowercase)
         const adminEmails = ["admin@admin", "superadmin@admin", "anotheradmin@admin"];
         
-        // If the email matches one in the admin list, override the role to admin
+        // If the email matches an admin email, override role to "admin"
         if (adminEmails.includes(email)) {
           role = "admin";
           console.log("Admin override applied. Role set to:", role);
         }
         
-        // For staff (or owner, if used), enforce that the email ends with the required domain
-        if ((role === "staff") && !email.endsWith("@maryourhelp-cebu.edu.ph")) {
-          document.getElementById("loginError").textContent = "Staff must use a @maryourhelp-cebu.edu.ph email.";
-          document.getElementById("loginError").style.display = "block";
+        // For staff, enforce that the email ends with "@maryourhelp-cebu.edu.ph"
+        if (role === "staff", "student" && !email.endsWith("@maryourhelp-cebu.edu.ph")) {
+          loginError.textContent = "Staff must use a @maryourhelp-cebu.edu.ph email.";
+          loginError.style.display = "block";
           console.log("Email domain check failed for staff.");
           return;
         }
         
-        console.log("Final Role:", role, "Email:", email);
-        localStorage.setItem("role", role);
+        // Generate OTP and store in sessionStorage
+        const otp = generateOTP();
+        sessionStorage.setItem("otp", otp);
+        sessionStorage.setItem("userEmail", email);
+        sessionStorage.setItem("userRole", role);
         
-        if (role === "admin") {
-          localStorage.setItem("adminEmail", email);
-          window.location.href = "/owner.html";
-        } else if (role === "staff") {
-          localStorage.setItem("staffEmail", email);
-          window.location.href = "/maintenance.html";
+        console.log("Generated OTP:", otp);
+        
+        // Send OTP via EmailJS
+        emailjs.send("service_5efo2h9", "template_b7exqii", {
+          to_email: email,
+          message: otp
+        }).then(function(response) {
+          console.log("Email sent!", response.status, response.text);
+          loginMessage.textContent = "OTP sent! Please check your email.";
+          loginMessage.style.display = "block";
+          // Transition to Step 2: OTP verification
+          document.getElementById("step1").classList.add("hidden");
+          document.getElementById("step2").classList.remove("hidden");
+        }, function(error) {
+          console.error("Failed to send OTP:", error);
+          loginError.textContent = "Failed to send OTP. Please try again.";
+          loginError.style.display = "block";
+        });
+      });
+
+      // Step 2: Handle OTP verification
+      otpForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        loginError.style.display = "none";
+        loginMessage.style.display = "none";
+        
+        const userOTP = document.getElementById("otpInput").value.trim();
+        const storedOTP = sessionStorage.getItem("otp");
+        const role = sessionStorage.getItem("userRole");
+        const email = sessionStorage.getItem("userEmail");
+        
+        if (userOTP === storedOTP) {
+          loginMessage.textContent = "OTP verified successfully!";
+          loginMessage.style.display = "block";
+          // Save role and email in localStorage and redirect based on role
+          localStorage.setItem("role", role);
+          if (role === "admin") {
+            localStorage.setItem("adminEmail", email);
+            window.location.href = "admin.html";
+          } else if (role === "staff") {
+            localStorage.setItem("staffEmail", email);
+            window.location.href = "maintenance.html";
+          } else {
+            window.location.href = "index.html";
+          }
         } else {
-          window.location.href = "/Student.html";
+          loginError.textContent = "Incorrect OTP. Please try again.";
+          loginError.style.display = "block";
         }
       });
     });

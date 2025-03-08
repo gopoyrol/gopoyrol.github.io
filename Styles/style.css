@@ -146,8 +146,7 @@ padding-bottom: 20px;
   font-size: 1em;
 }
 .contacts {
-  margin: 0 120px;
-  background-color: rgb(86, 119, 226);
+  margin: 20px 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
